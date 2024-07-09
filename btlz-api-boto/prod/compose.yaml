@@ -1,0 +1,35 @@
+name: boto
+networks:
+  #Сеть для общения nginx и api
+  boto-net:
+    external: true
+    # docker network create --driver=bridge --subnet=172.60.0.0/16 boto-net
+    name: boto-net
+
+services:
+
+  boto-api:
+    container_name: boto-api
+    build:
+      context: ../..
+      dockerfile: btlz-api-boto/prod/Dockerfile.back
+      target: prod
+
+    #Открывае порт в сеть network для передачи запросов от nginx
+    expose:
+      - "3000"
+
+    networks:
+      - boto-net
+
+    cpus: 0.3
+
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: 5
+
+    command: "/bin/sh -c 'node index.js'"
+
+    restart: unless-stopped
