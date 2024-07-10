@@ -6,10 +6,5 @@ WORKDIR /app
 COPY ./package.json .
 RUN npm install --omit=dev
 
-
-FROM base as dev
-RUN npm install --include=dev
-
 FROM base as prod
-COPY ./index.js .
-COPY ./binanceClient.js  .
+COPY ./src ./src

@@ -30,6 +30,6 @@ services:
         max-size: 10m
         max-file: 5
 
-    command: "/bin/sh -c 'node index.js'"
+    command: "/bin/sh -c 'node src/index.js'"
 
     restart: unless-stopped
