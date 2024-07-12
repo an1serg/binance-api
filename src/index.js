@@ -8,14 +8,19 @@ const app = express();
 app.use(bodyParser.json());
 
 app.post('/binance/myTrades', async (req, res) => {
-  const { apiKey, apiSecret } = req.body;
+  const { apiKey, apiSecret, dateFrom, dateTo } = req.body;
   if (!apiKey || !apiSecret) {
     return res.status(400).json({ error: 'API key and secret are required' });
   }
+
+  if (!dateFrom || !dateTo) {
+    return res.status(400).json({ error: 'dateFrom and dateTo are required' })
+  }
+
   try {
     console.log("Получение myTrades")
     const client = new Spot(apiKey, apiSecret);
-    const data = await getMyTrades(client);
+    const data = await getMyTrades(client, dateFrom, dateTo);
     console.log(`Загружено ${data.length} трейдов`)
     res.status(200).json(data);
   } catch (error) {

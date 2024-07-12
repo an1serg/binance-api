@@ -7,13 +7,18 @@ export const getAllPairs = async (client) => {
   }
 };
 
-export const getTradesForPair = async (client, pair) => {
+export const getTradesForPair = async (client, pair, dateFrom, dateTo) => {
   try {
     const response = await client.myTrades(pair, {
-      limit: 1000
+      limit: 1000,
+      startTime: dateFrom,
+      endTime: dateTo
     });
     return response.data;
   } catch (error) {
+    console.log(`Error getTradesForPair!!!`)
+    console.log(error)
+    console.log(error.data)
     throw new Error(error.message);
   }
 };
@@ -38,7 +43,7 @@ export const getAccountInfo = async (client) => {
   }
 };
 
-export const getMyTrades = async (client) => {
+export const getMyTrades = async (client, dateFrom, dateTo) => {
   try {
     let queryCounter = 0;
     const pairs = await getAllPairs(client);
@@ -52,7 +57,8 @@ export const getMyTrades = async (client) => {
         const assetPairs = pairs.filter(pair => pair.includes(asset));
         
         for (let j = 0; j < assetPairs.length; j++) {
-          const pairTrades = await getTradesForPair(client, assetPairs[j]);
+          console.log(`Получение данных для пары: ${assetPairs[j]}`)
+          const pairTrades = await getTradesForPair(client, assetPairs[j], dateFrom, dateTo);
           trades.push(...pairTrades);
           queryCounter++;
           if (queryCounter % 100 === 0) console.log(`Выполнено ${queryCounter} запросов`)
